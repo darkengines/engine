@@ -39,8 +39,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\SVN\Engine\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\SVN\Engine\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>E:\SVN\Engine\include;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\SVN\Engine\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -84,6 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics.h" />
+    <ClInclude Include="Inputs.h" />
     <ClInclude Include="Precision.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="Vector3D.h" />
