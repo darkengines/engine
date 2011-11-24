@@ -11,6 +11,7 @@
 
 #include <math.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "Precision.h"
 
 ////////////////////////////////////////////////////
@@ -19,9 +20,10 @@
 
 class Matrix4 {
 private:
-	real* values;
 public:
 	Matrix4();
+	~Matrix4();
+	real* values;
 	void Identity();
 	void Zero();
 	void Clone(Matrix4*);
@@ -29,9 +31,10 @@ public:
 	void operator*=(Matrix4*);
 	Matrix4* operator+(Matrix4*);
 	void operator+=(Matrix4*);
+	void Print();
 private:
-	void product(Matrix4*, Matrix4*);
-	void addition(Matrix4*, Matrix4*);
+	void product(Matrix4*, Matrix4*, Matrix4*);
+	void addition(Matrix4*, Matrix4*, Matrix4*);
 };
 
 #endif
