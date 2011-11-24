@@ -20,9 +20,13 @@ using namespace std;
 
 class Inputs {
 private:
+	SDL_Event events;
 public:
 	Inputs();
+	int Perform();
+	void (*ptrLeave)();
 private:
-}
+	int CaptureEvents();
+};
 
 #endif

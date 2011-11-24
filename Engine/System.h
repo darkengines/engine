@@ -10,7 +10,9 @@
 ////////////////////////////////////////////////////
 
 #include "Graphics.h"
+#include "Inputs.h"
 #include <SDL\SDL.h>
+#include "Shader.h"
 
 ////////////////////////////////////////////////////
 // Class name: System
@@ -21,6 +23,7 @@ using namespace std;
 class System {
 private:
 	Graphics* graphics;
+	Inputs* inputs;
 	SDL_Window* window;
 public:
 	System();
@@ -29,6 +32,7 @@ public:
 	void Stop();
 	void Shutdown();
 	int Frame();
+	void Run();
 private:
 	int InitializeWindow();
 };

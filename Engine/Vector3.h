@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////
-// File name: Vector3D.h
+// File name: Vector3.h
 ////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////
@@ -9,23 +9,23 @@
 #include "Precision.h"
 
 ////////////////////////////////////////////////////
-// Class name: Vector3D
+// Class name: Vector3
 ////////////////////////////////////////////////////
 
-class Vector3D {
+class Vector3 {
 public:
-	Vector3D();
-	Vector3D(real, real, real);
+	Vector3();
+	Vector3(real, real, real);
 	real x, y, z;
-	Vector3D operator+(real);
+	Vector3 operator+(real);
 	void operator+=(real);
-	Vector3D operator+(Vector3D&);
-	void operator+=(Vector3D&);
-	Vector3D operator*(real);
+	Vector3 operator+(Vector3&);
+	void operator+=(Vector3&);
+	Vector3 operator*(real);
 	void operator*=(real);
-	real operator*(Vector3D&);
+	real operator*(Vector3&);
 	real magnitude();
 	void normalize();
-	void addScaledVector(Vector3D&, real);
+	void addScaledVector(Vector3&, real);
 private:
 };

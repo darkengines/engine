@@ -6,6 +6,7 @@
 #define _GRAPHICS_H_
 #include <GL\glew.h>
 #include <iostream>
+#include "Shader.h"
 
 ////////////////////////////////////////////////////
 // Includes
