@@ -15,6 +15,7 @@
 #include <GL\GL.h>
 #include "Matrix4.h"
 #include "Shader.h"
+#include "Model.h"
 
 ////////////////////////////////////////////////////
 // Class name: System

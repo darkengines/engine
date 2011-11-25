@@ -100,10 +100,8 @@ void System::Run() {
 	float cy[] = {0.0, 1.0, 0.0, 0.0, 1.0, 0.0};
 	float vz[] = {0,0,0,0,0,1};
 	float cz[] = {0.0, 0.0, 1.0, 0.0, 0.0, 1.0};
-	float vertices[] = {-0.5, 0, 0.0, 0.0, 1, 0.0, 0.5, 0, 0.0};
-	float colors[] = {0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0};
-	
-		
+	Model* model = new Model();
+	model->Initialize("model.obj");
 	float i = 0;
 	while (!*done) {
 		
@@ -116,13 +114,13 @@ void System::Run() {
 		modelView->Translate(1.0,1.0,1.0);
 		modelView->Rotate(0,1,0,i);
 		glUniformMatrix4fv(glGetUniformLocation(shader->program, "modelView"), 1, GL_TRUE, modelView->values);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, vertices);
+		/*glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, vertices);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, colors);
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
+		glDisableVertexAttribArray(1);*/
 
 		i+=0.01;
 		
