@@ -24,13 +24,14 @@ class Shader {
 private:
 	GLuint vertexShader;
 	GLuint pixelShader;
-	GLuint program;
+	//GLuint program;
 
 public:
 	Shader();
 	int Initialize(const char*, const char*, char**, int);
 	void Use();
 	void Shutdown();
+	GLuint program;
 private:
 	int loadShader(GLuint*, const char*, GLenum);
 	int loadProgram(GLuint*, GLuint, GLuint, char**, int);

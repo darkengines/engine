@@ -64,3 +64,14 @@ void Vector3::addScaledVector(Vector3& v, real scale) {
 	y += v.y*scale;
 	z += v.z*scale;
 }
+
+Vector3 Vector3::operator%(Vector3& v) {
+	return Vector3(y*v.z-z*v.y, z*v.x-x*v.z, x*v.y-y*v.x);
+}
+
+void Vector3::operator%=(Vector3& v) {
+	Vector3 temp = Vector3(y*v.z-z*v.y, z*v.x-x*v.z, x*v.y-y*v.x);
+	x = temp.x;
+	y = temp.y;
+	z = temp.z;
+}

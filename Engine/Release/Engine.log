@@ -1,0 +1,15 @@
+﻿La génération a démarré 25/11/2011 19:13:32.
+     1>Projet "D:\SVN\Engine\Engine\Engine.vcxproj" sur le nœud 2 (build cible(s)).
+     1>InitializeBuildStatus:
+         Création de "Release\Engine.unsuccessfulbuild", car "AlwaysCreate" a été spécifié.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt Model.cpp
+         Model.cpp
+     1>d:\svn\engine\engine\Model.h(26): error C2143: erreur de syntaxe : absence de ';' avant '*'
+     1>d:\svn\engine\engine\Model.h(26): error C4430: spécificateur de type manquant - int est pris en compte par défaut. Remarque : C++ ne prend pas en charge int par défaut
+     1>d:\svn\engine\engine\Model.h(26): error C4430: spécificateur de type manquant - int est pris en compte par défaut. Remarque : C++ ne prend pas en charge int par défaut
+     1>Génération du projet "D:\SVN\Engine\Engine\Engine.vcxproj" terminée (build cible(s)) -- ÉCHEC.
+
+ÉCHEC de la build.
+
+Temps écoulé 00:00:00.55

@@ -12,6 +12,8 @@
 #include "Graphics.h"
 #include "Inputs.h"
 #include <SDL\SDL.h>
+#include <GL\GL.h>
+#include "Matrix4.h"
 #include "Shader.h"
 
 ////////////////////////////////////////////////////

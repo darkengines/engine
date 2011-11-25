@@ -73,7 +73,7 @@ int System::Frame() {
 	if (graphics->Render()<0) {
 		return -1;
 	}
-	SDL_GL_SwapWindow(window);
+	//SDL_GL_SwapWindow(window);
 	return 0;
 }
 
@@ -86,11 +86,79 @@ void System::Run() {
 	*done = 0;
 	inputs->ptrLeave = Leave;
 	Shader* shader = new Shader();
+	Matrix4* projection = new Matrix4();
+	projection->Identity();
+	projection->Perspective(1.22, 800.0/600.0, 0.0, 100.0);
+	Matrix4* modelView = new Matrix4();
 	char* attr[] = {{"in_Vertex"},{"in_Color"}};
 	shader->Initialize("Shaders/couleurs.vert", "Shaders/couleurs.frag", attr, 2);
 	shader->Use();
+	glUniformMatrix4fv(glGetUniformLocation(shader->program, "projection"), 1, GL_TRUE, projection->values);
+	float vx[] = {0,0,0,1,0,0};
+	float cx[] = {1.0, 0.0, 0.0, 1.0, 0.0, 0.0};
+	float vy[] = {0,0,0,0,1,0};
+	float cy[] = {0.0, 1.0, 0.0, 0.0, 1.0, 0.0};
+	float vz[] = {0,0,0,0,0,1};
+	float cz[] = {0.0, 0.0, 1.0, 0.0, 0.0, 1.0};
+	float vertices[] = {-0.5, 0, 0.0, 0.0, 1, 0.0, 0.5, 0, 0.0};
+	float colors[] = {0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0};
+	
+		
+	float i = 0;
 	while (!*done) {
+		
 		SDL_Delay(16.6);
 		Frame();
+		modelView->Identity();
+		
+		modelView->Camera(3,3,3,0,0,0,0,1,0);
+		modelView->Save();
+		modelView->Translate(1.0,1.0,1.0);
+		modelView->Rotate(0,1,0,i);
+		glUniformMatrix4fv(glGetUniformLocation(shader->program, "modelView"), 1, GL_TRUE, modelView->values);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, vertices);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, colors);
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
+
+		i+=0.01;
+		
+		modelView->Load();
+		glUniformMatrix4fv(glGetUniformLocation(shader->program, "modelView"), 1, GL_TRUE, modelView->values);
+		
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, vx);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, cx);
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glDrawArrays(GL_LINES, 0, 3);
+		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, vy);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, cy);
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glDrawArrays(GL_LINES, 0, 3);
+		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
+
+		
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, vz);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, cz);
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glDrawArrays(GL_LINES, 0, 3);
+		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
+		
+		
+
+		SDL_GL_SwapWindow(window);
+
 	}
+	delete modelView;
+	delete projection;
 }
