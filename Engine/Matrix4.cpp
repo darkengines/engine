@@ -135,12 +135,15 @@ void Matrix4::Rotate(real x, real y, real z, real angle) {
 	rotator->values[0] = base.x*base.x*(1-cosr(angle))+cosr(angle);
 	rotator->values[1] = base.x*base.y*(1-cosr(angle))-base.z*sinr(angle);
 	rotator->values[2] = base.x*base.z*(1-cosr(angle))+base.y*sinr(angle);
+
 	rotator->values[4] = base.x*base.y*(1-cosr(angle))+base.z*sinr(angle);
 	rotator->values[5] = base.y*base.y*(1-cosr(angle))+cosr(angle);
-	rotator->values[6] = base.y*base.z*(1-cosr(angle))+base.x*sinr(angle);
+	rotator->values[6] = base.y*base.z*(1-cosr(angle))-base.x*sinr(angle);
+
 	rotator->values[8] = base.x*base.z*(1-cosr(angle))-base.y*sinr(angle);
 	rotator->values[9] = base.y*base.z*(1-cosr(angle))+base.x*sinr(angle);
 	rotator->values[10] = base.z*base.z*(1-cosr(angle))+cosr(angle);
+
 	rotator->values[15] = 1.0;
 	*this*=rotator;
 	delete rotator;

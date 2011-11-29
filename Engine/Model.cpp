@@ -14,7 +14,7 @@
 
 Model::Model() {}
 int Model::Initialize(const char* source) {
-
+	loadModel(source);
 	return 0;
 }
 
@@ -41,9 +41,15 @@ int Model::loadCounts(const char* source) {
 	while(!file.eof()) {
 		if (input == 'v') {
 			file.get(input);
-			if (input = ' ') verticesCount++;
-			if (input = 't') texturesCount++;
-			if (input = 'n') normalsCount++;
+			if (input == ' ') {
+				verticesCount++;
+			}
+			if (input == 't') {
+				texturesCount++;
+			}
+			if (input == 'n') {
+				normalsCount++;
+			}
 		}
 		if (input == 'f') {
 			file.get(input);
@@ -51,7 +57,9 @@ int Model::loadCounts(const char* source) {
 				facesCount++;
 			}
 		}
-		while (input != '\n') file.get(input);
+		while (input != '\n') {
+			file.get(input);
+		}
 		file.get(input);
 	}
 	file.close();
@@ -65,52 +73,127 @@ int Model::loadData(const char* source) {
 		cout<<source<<" open error"<<endl;
 		return -1;
 	}
-	vertices = (Vertex*)malloc(sizeof(Vertex)*verticesCount);
-	textures = (Vertex*)malloc(sizeof(Vertex)*texturesCount);
-	normals = (Vertex*)malloc(sizeof(Vertex)*normalsCount);
-	faces = (Face*)malloc(sizeof(Face)*facesCount);
 
-	int vertexIndex, textureIndex, normalIndex, faceIndex;
+	PointIndice* pointsIndices = (PointIndice*)malloc(sizeof(PointIndice)*facesCount*3);
+
+	queue<int> problems;
+
+	int vertexIndex, textureIndex, normalIndex, faceIndex, index, solved;
+
 	vertexIndex = 0;
 	textureIndex = 0;
 	normalIndex = 0;
 	faceIndex = 0;
+	solved = 0;
+	index = 0;
 
-	char input;
-	file.get(input);
-	while (!file.eof()) {
+	char input, foo;
+
+	// FILL
+	Point *verticesPoints, *texturePoints, *normalsPoints;
+	verticesPoints = (Point*)malloc(sizeof(Point)*verticesCount);
+	texturePoints = (Point*)malloc(sizeof(Point)*texturesCount);
+	normalsPoints = (Point*)malloc(sizeof(Point)*normalsCount);
+	index = 0;
+	file.close();
+	file.open(source);
+
+	while (file>>input) {
 		if (input == 'v') {
 			file.get(input);
 			if (input == ' ') {
-				file>>vertices[vertexIndex].x>>vertices[vertexIndex].y>>vertices[vertexIndex].z;
-				vertices[vertexIndex].z *= -1;
-				vertexIndex++;				
+				file>>verticesPoints[vertexIndex].x>>verticesPoints[vertexIndex].y>>verticesPoints[vertexIndex].z;
+				verticesPoints[vertexIndex].z *= -1.0;
+				vertexIndex++;		
 			}
 			if (input == 'n') {
-				file>>normals[normalIndex].x>>normals[normalIndex].y>>normals[normalIndex].z;
-				normals[normalIndex].z *= -1;
+				file>>normalsPoints[normalIndex].x>>normalsPoints[normalIndex].y>>normalsPoints[normalIndex].z;
+				normalsPoints[normalIndex].z *= -1.0;
 				normalIndex++;				
 			}
 			if (input == 't') {
-				file>>textures[textureIndex].x>>vertices[textureIndex].y;
-				vertices[textureIndex].y = 1.0f - vertices[textureIndex].y;
+				file>>texturePoints[textureIndex].x>>texturePoints[textureIndex].y;
+				texturePoints[textureIndex].y = 1.0f - texturePoints[textureIndex].y;
 				textureIndex++;				
 			}			
 		}
 		if (input == 'f') {
 			 file.get(input);
 			 if (input == ' ') {
-				file>>faces[faceIndex].v3>>faces[faceIndex].t3>>faces[faceIndex].n3
-					>>faces[faceIndex].v2>>faces[faceIndex].t2>>faces[faceIndex].n2
-					>>faces[faceIndex].v1>>faces[faceIndex].t1>>faces[faceIndex].n1;
-				faceIndex++;
+				 file>>pointsIndices[index+2].v>>foo>>pointsIndices[index+2].t>>foo>>pointsIndices[index+2].n;
+				 pointsIndices[index+2].v--;
+				 pointsIndices[index+2].t--;
+				 pointsIndices[index+2].n--;
+				 file>>pointsIndices[index+1].v>>foo>>pointsIndices[index+1].t>>foo>>pointsIndices[index+1].n;
+				 pointsIndices[index+1].v--;
+				 pointsIndices[index+1].t--;
+				 pointsIndices[index+1].n--;
+				 file>>pointsIndices[index].v>>foo>>pointsIndices[index].t>>foo>>pointsIndices[index].n;
+				 pointsIndices[index].v--;
+				 pointsIndices[index].t--;
+				 pointsIndices[index].n--;
+				 index+=3;
 			 }
 		}
-		while (input != '\n') {
-					file.get(input);
-		}
-		file.get(input);
 	}
 	file.close();
+	float t = 1;
+	int i = 0;
+	int j = 0;
+	int contains = 0;
+	indicesCount = 0;
+	while (i<facesCount*3) {
+		j = 0;
+		contains = 0;
+		while (!contains && j<i) {
+			contains = pointsIndices[j].v == pointsIndices[i].v
+					&& pointsIndices[j].t == pointsIndices[i].t
+					&& pointsIndices[j].n == pointsIndices[i].n;
+			j++;
+		}
+		if (!contains) {
+			indicesCount++;
+		}
+		i++;
+	}
+
+	indices = (unsigned int*)malloc(sizeof(unsigned int)*facesCount*3);
+	vertices = (Point*)malloc(sizeof(Point)*indicesCount);
+	textures = (Point*)malloc(sizeof(Point)*indicesCount);
+	normals = (Point*)malloc(sizeof(Point)*indicesCount);
+
+	i = 0;
+	j = 0;
+	int k=0;
+	contains = 0;
+	while (i<facesCount*3) {
+		j = 0;
+		contains = 0;
+		while (!contains && j<i) {
+			contains = pointsIndices[j].v == pointsIndices[i].v
+					&& pointsIndices[j].t == pointsIndices[i].t
+					&& pointsIndices[j].n == pointsIndices[i].n;
+			j++;
+		}
+		if (!contains) {
+			indices[i] = k;
+			vertices[k].x = verticesPoints[pointsIndices[i].v].x;
+			vertices[k].y = verticesPoints[pointsIndices[i].v].y;
+			vertices[k].z = verticesPoints[pointsIndices[i].v].z;
+			textures[k].x = texturePoints[pointsIndices[i].t].x;
+			textures[k].y = texturePoints[pointsIndices[i].t].y;
+			normals[k].x = normalsPoints[pointsIndices[i].n].x;
+			normals[k].y = normalsPoints[pointsIndices[i].n].y;
+			normals[k].z = normalsPoints[pointsIndices[i].n].z;
+			k++;
+		} else {
+			indices[i] = indices[j-1];
+		}
+		i++;
+	}
+	free(verticesPoints);
+	free(texturePoints);
+	free(normalsPoints);
+	free(pointsIndices);
 	return 0;
 }

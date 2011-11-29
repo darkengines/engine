@@ -2,6 +2,7 @@
 
 in vec3 in_Vertex;
 in vec3 in_Color;
+in vec3 in_Normal;
 
 out vec3 color;
 

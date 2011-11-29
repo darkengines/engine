@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <queue>
 #include <stdlib.h>
 #include "Precision.h"
 
@@ -20,13 +21,15 @@
 
 typedef struct {
 	real x, y, z;
-} Vertex;
+} Point;
 
 typedef struct {
-	int v1, v2, v3;
-	int t1, t2, t3;
-	int n1, n2, n3;
-} Face;
+	unsigned int v, t, n;
+} PointIndice;
+
+typedef struct {
+	unsigned int i;
+} Indice;
 
 ////////////////////////////////////////////////////
 // Class name: Model
@@ -37,9 +40,9 @@ using namespace std;
 class Model {
 private:
 public:
-	Vertex *vertices, *textures, *normals;
-	int verticesCount, texturesCount, normalsCount, facesCount;
-	Face* faces;
+	Point *vertices, *textures, *normals;
+	unsigned int* indices;
+	int verticesCount, texturesCount, normalsCount, facesCount, indicesCount;
 	Model();
 	int Initialize(const char*);
 private:
