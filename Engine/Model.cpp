@@ -91,7 +91,7 @@ int Model::loadData(const char* source) {
 
 	// FILL
 	Point *verticesPoints, *texturePoints, *normalsPoints;
-	verticesPoints = (Point*)malloc(sizeof(Point)*verticesCount);
+ 	verticesPoints = (Point*)malloc(sizeof(Point)*verticesCount);
 	texturePoints = (Point*)malloc(sizeof(Point)*texturesCount);
 	normalsPoints = (Point*)malloc(sizeof(Point)*normalsCount);
 	index = 0;

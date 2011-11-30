@@ -93,7 +93,7 @@ void System::Run() {
 	projection->Identity();
 	projection->Perspective(1.22, 1024.0/768.0, 1.0, 100.0);
 	Matrix4* modelView = new Matrix4();
-	char* attr[] = {{"in_Vertex"},{"in_Color"}, {"in_Normal"}};
+	char* attr[] = {{"in_Vertex"},{"in_Normal"}, {"in_Texture"}};
 	shader->Initialize("Shaders/couleurs.vert", "Shaders/couleurs.frag", attr, 2);
 	shader->Use();
 	glUniformMatrix4fv(glGetUniformLocation(shader->program, "projection"), 1, GL_TRUE, projection->values);
@@ -104,14 +104,21 @@ void System::Run() {
 	float vz[] = {0,0,0,0,0,1};
 	float cz[] = {0.0, 0.0, 1.0, 0.0, 0.0, 1.0};
 	Model* model = new Model();
-	model->Initialize("rifle.obj");
+	model->Initialize("Models/cube.obj");
+
+	Texture* texture = new Texture();
+	texture->Initialize("Textures/pixel.png");
+
 	float j = 0;
 	GLuint indices, vertices, normals, textures;
 	glGenBuffers(1, &vertices);
+
 	glBindBuffer(GL_ARRAY_BUFFER, vertices);
-	glBufferData(GL_ARRAY_BUFFER, model->indicesCount*3*2*sizeof(float), 0, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, model->indicesCount*sizeof(float)*3*3, 0, GL_STATIC_DRAW);
+
 	glBufferSubData(GL_ARRAY_BUFFER, 0, model->indicesCount*3*sizeof(float), model->vertices);
 	glBufferSubData(GL_ARRAY_BUFFER, model->indicesCount*3*sizeof(float), model->indicesCount*3*sizeof(float), model->normals);
+	glBufferSubData(GL_ARRAY_BUFFER, model->indicesCount*3*2*sizeof(float), model->indicesCount*3*sizeof(float), model->textures);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glGenBuffers(1, &indices);
@@ -120,22 +127,26 @@ void System::Run() {
 	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0,model->facesCount*3*sizeof(unsigned int), model->indices);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	//int i = 0;
-	//while (i<model->indicesCount) {
-	//	cout<<i<<"  "<<model->vertices[i].x<<" "<<model->vertices[i].y<<" "<<model->vertices[i].z<<endl;
-	//	i++;
-	//}
-	//i=0;
-	//while (i<model->indicesCount) {
-	//	cout<<i<<"  "<<model->normals[i].x<<" "<<model->normals[i].y<<" "<<model->normals[i].z<<endl;;
-	//	i++;
-	//}
-	//
-	//i=0;
-	//while (i<model->facesCount*3) {
-	//	cout<<"  "<<model->indices[i]<<" "<<model->indices[i+1]<<" "<<model->indices[i+2]<<endl;;
-	//	i+=3;
-	//}
+	/*int i = 0;
+	while (i<model->indicesCount) {
+		cout<<i<<"  "<<model->vertices[i].x<<" "<<model->vertices[i].y<<" "<<model->vertices[i].z<<endl;
+		i++;
+	}
+	i=0;
+	while (i<model->indicesCount) {
+		cout<<i<<"  "<<model->normals[i].x<<" "<<model->normals[i].y<<" "<<model->normals[i].z<<endl;;
+		i++;
+	}
+	i=0;
+	while (i<model->indicesCount) {
+		cout<<i<<"  "<<model->textures[i].x<<" "<<model->textures[i].y<<" "<<model->textures[i].z<<endl;;
+		i++;
+	}
+	i=0;
+	while (i<model->facesCount*3) {
+		cout<<"  "<<model->indices[i]<<" "<<model->indices[i+1]<<" "<<model->indices[i+2]<<endl;;
+		i+=3;
+	}*/
 	float cam[3] = {3, 3, 3};
 
 	while (!*done) {
@@ -147,30 +158,31 @@ void System::Run() {
 		modelView->Save();
 		//modelView->Translate(0.0,0.0,0.0);
 		
-		modelView->Rotate(1,1,0,j);
-		modelView->Scale(0.10, 0.10, 0.10);
+		modelView->Rotate(0,1,0,j);
 		//modelView->Rotate(1,0,0,3.14);
+		//modelView->Scale(0.0002, 0.0002, 0.0002);
+		
 		Frame();
 		glUniformMatrix4fv(glGetUniformLocation(shader->program, "modelView"), 1, GL_TRUE, modelView->values);
 		glUniformMatrix4fv(glGetUniformLocation(shader->program, "camera"), 1, GL_TRUE, camera->values);
 		glUniform3f(glGetUniformLocation(shader->program, "camVector"), -1,-1,-1);
+		glBindTexture(GL_TEXTURE_2D, texture->textureID);
+		glUniform1i(glGetUniformLocation(shader->program, "texture2d"),0);
+
 		glBindBuffer(GL_ARRAY_BUFFER, vertices);
 
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_FLOAT, 0, 0);
+		glVertexAttribPointer(0, 3, GL_FLOAT,GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(0);
 
-		/*glEnableClientState(GL_COLOR_ARRAY);
-		glColorPointer(3, GL_FLOAT, 0, 0);*/
+		glVertexAttribPointer(1, 3, GL_FLOAT,GL_TRUE, 0,(char*)(model->indicesCount*3*sizeof(float)));
+		glEnableVertexAttribArray(1);
 
-		glEnableClientState(GL_NORMAL_ARRAY);
-		glNormalPointer(GL_FLOAT, 0, (char*)(model->indicesCount*3*sizeof(float)));
+		glVertexAttribPointer(2, 3, GL_FLOAT,GL_FALSE, 0,(char*)(model->indicesCount*3*2*sizeof(float)));
+		glEnableVertexAttribArray(2);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices);
 		glDrawElements(GL_TRIANGLES, model->facesCount*3, GL_UNSIGNED_INT, 0);
 
-		glDisableClientState(GL_NORMAL_ARRAY);
-		glDisableClientState(GL_COLOR_ARRAY);
-		glDisableClientState(GL_VERTEX_ARRAY);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		
@@ -201,8 +213,6 @@ void System::Run() {
 		glDrawArrays(GL_LINES, 0, 3);
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
-		
-		
 
 		SDL_GL_SwapWindow(window);
 

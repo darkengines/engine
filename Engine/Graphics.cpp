@@ -24,6 +24,7 @@ int Graphics::Initialize() {
 		return -1;
 	}
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE_2D);
 	return 0;
 }
 

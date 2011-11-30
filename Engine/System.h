@@ -16,6 +16,7 @@
 #include "Matrix4.h"
 #include "Shader.h"
 #include "Model.h"
+#include "Texture.h"
 
 ////////////////////////////////////////////////////
 // Class name: System
