@@ -10,8 +10,8 @@
 ////////////////////////////////////////////////////
 
 #include "Model.h"
-#include "Texture.h"
 #include "Shader.h"
+#include "Texture.h"
 #include <list>
 
 ////////////////////////////////////////////////////
@@ -22,7 +22,7 @@ using namespace std;
 
 class Object {
 private:
-	static list<unsigned int> ;
+	static list<unsigned int> loadedModel;
 public:
 	Object();
 	Model** models;
