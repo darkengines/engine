@@ -39,7 +39,7 @@ int System::InitializeWindow() {
 		return -1;
 	}
 
-	window = SDL_CreateWindow("Title", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+	window = SDL_CreateWindow("Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
 	if (!window) {
 		cout<<"SDL_CreateWindow error "<<SDL_GetError()<<endl;
 		return -1;
@@ -93,6 +93,7 @@ void System::Run() {
 	projection->Identity();
 	projection->Perspective(1.22, 1024.0/768.0, 1.0, 100.0);
 	Matrix4* modelView = new Matrix4();
+	Object* object = new Object();
 	char* attr[] = {{"in_Vertex"},{"in_Normal"}, {"in_Texture"}};
 	shader->Initialize("Shaders/couleurs.vert", "Shaders/couleurs.frag", attr, 2);
 	shader->Use();
@@ -107,18 +108,17 @@ void System::Run() {
 	model->Initialize("Models/cube.obj");
 
 	Texture* texture = new Texture();
-	texture->Initialize("Textures/pixel.png");
+	texture->Initialize("Textures/penguins.tga");
 
 	float j = 0;
-	GLuint indices, vertices, normals, textures;
+	GLuint indices, vertices;
 	glGenBuffers(1, &vertices);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertices);
 	glBufferData(GL_ARRAY_BUFFER, model->indicesCount*sizeof(float)*3*3, 0, GL_STATIC_DRAW);
-
 	glBufferSubData(GL_ARRAY_BUFFER, 0, model->indicesCount*3*sizeof(float), model->vertices);
 	glBufferSubData(GL_ARRAY_BUFFER, model->indicesCount*3*sizeof(float), model->indicesCount*3*sizeof(float), model->normals);
-	glBufferSubData(GL_ARRAY_BUFFER, model->indicesCount*3*2*sizeof(float), model->indicesCount*3*sizeof(float), model->textures);
+	glBufferSubData(GL_ARRAY_BUFFER, model->indicesCount*3*2*sizeof(float), model->indicesCount*3*sizeof(float), model->UVs);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glGenBuffers(1, &indices);
@@ -127,31 +127,16 @@ void System::Run() {
 	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0,model->facesCount*3*sizeof(unsigned int), model->indices);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	/*int i = 0;
-	while (i<model->indicesCount) {
-		cout<<i<<"  "<<model->vertices[i].x<<" "<<model->vertices[i].y<<" "<<model->vertices[i].z<<endl;
-		i++;
-	}
-	i=0;
-	while (i<model->indicesCount) {
-		cout<<i<<"  "<<model->normals[i].x<<" "<<model->normals[i].y<<" "<<model->normals[i].z<<endl;;
-		i++;
-	}
-	i=0;
-	while (i<model->indicesCount) {
-		cout<<i<<"  "<<model->textures[i].x<<" "<<model->textures[i].y<<" "<<model->textures[i].z<<endl;;
-		i++;
-	}
-	i=0;
-	while (i<model->facesCount*3) {
-		cout<<"  "<<model->indices[i]<<" "<<model->indices[i+1]<<" "<<model->indices[i+2]<<endl;;
-		i+=3;
-	}*/
 	float cam[3] = {3, 3, 3};
-
+	Uint32 ticks, lastTicks;
+	ticks = lastTicks = 0;
 	while (!*done) {
 		
-		SDL_Delay(16.6);
+		ticks = SDL_GetTicks();
+		if (ticks - lastTicks < 17) {
+			SDL_Delay( 17 - (ticks - lastTicks));
+		}
+		lastTicks = SDL_GetTicks();
 		
 		modelView->Identity();
 		

@@ -1,36 +1,32 @@
 ////////////////////////////////////////////////////
-// File name: Texture.h
+// File name: Object.h
 ////////////////////////////////////////////////////
 
-#ifndef _TEXTURE_H
-#define _TESTURE_H_
+#ifndef _OBJECT_H_
+#define _OBJECT_H_
 
 ////////////////////////////////////////////////////
 // Includes
 ////////////////////////////////////////////////////
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <fstream>
-#include <iostream>
-#include <gl\glew.h>
-#include <SDL\SDL_image.h>
+#include "Model.h"
+#include "Texture.h"
+#include "Shader.h"
+#include <list>
 
 ////////////////////////////////////////////////////
-// Class name: Texture
+// Class name: Object
 ////////////////////////////////////////////////////
 
-using namespace std;
-
-class Texture {
+class Object {
 private:
+	static list<unsigned int> ;
 public:
-	Texture();
-	int Initialize(const char*);
-	GLuint textureID;
-
+	Object();
+	Model** models;
+	Texture** textures;
+	Shader** Shaders;
 private:
-	int loadImage(const char*);
 };
 
 #endif

@@ -3,8 +3,13 @@
 #include "Vector3.h"
 #include "Matrix4.h"
 #include "System.h"
+#include <Windows.h>
 
 int main(int argc, char** argv) {
+
+	SetPriorityClass(GetCurrentProcess(),
+					 REALTIME_PRIORITY_CLASS
+	);
 
 	System* system = new System();
 	system->Initialize();

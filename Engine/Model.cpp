@@ -32,7 +32,7 @@ int Model::loadCounts(const char* source) {
 		return -1;
 	}
 	verticesCount = 0;
-	texturesCount = 0;
+	UVsCount = 0;
 	normalsCount = 0;
 	facesCount = 0;
 	char input;
@@ -45,7 +45,7 @@ int Model::loadCounts(const char* source) {
 				verticesCount++;
 			}
 			if (input == 't') {
-				texturesCount++;
+				UVsCount++;
 			}
 			if (input == 'n') {
 				normalsCount++;
@@ -88,11 +88,9 @@ int Model::loadData(const char* source) {
 	index = 0;
 
 	char input, foo;
-
-	// FILL
 	Point *verticesPoints, *texturePoints, *normalsPoints;
  	verticesPoints = (Point*)malloc(sizeof(Point)*verticesCount);
-	texturePoints = (Point*)malloc(sizeof(Point)*texturesCount);
+	texturePoints = (Point*)malloc(sizeof(Point)*UVsCount);
 	normalsPoints = (Point*)malloc(sizeof(Point)*normalsCount);
 	index = 0;
 	file.close();
@@ -118,22 +116,22 @@ int Model::loadData(const char* source) {
 			}			
 		}
 		if (input == 'f') {
-			 file.get(input);
-			 if (input == ' ') {
-				 file>>pointsIndices[index+2].v>>foo>>pointsIndices[index+2].t>>foo>>pointsIndices[index+2].n;
-				 pointsIndices[index+2].v--;
-				 pointsIndices[index+2].t--;
-				 pointsIndices[index+2].n--;
-				 file>>pointsIndices[index+1].v>>foo>>pointsIndices[index+1].t>>foo>>pointsIndices[index+1].n;
-				 pointsIndices[index+1].v--;
-				 pointsIndices[index+1].t--;
-				 pointsIndices[index+1].n--;
-				 file>>pointsIndices[index].v>>foo>>pointsIndices[index].t>>foo>>pointsIndices[index].n;
-				 pointsIndices[index].v--;
-				 pointsIndices[index].t--;
-				 pointsIndices[index].n--;
-				 index+=3;
-			 }
+			file.get(input);
+			if (input == ' ') {
+				file>>pointsIndices[index+2].v>>foo>>pointsIndices[index+2].t>>foo>>pointsIndices[index+2].n;
+				pointsIndices[index+2].v--;
+				pointsIndices[index+2].t--;
+				pointsIndices[index+2].n--;
+				file>>pointsIndices[index+1].v>>foo>>pointsIndices[index+1].t>>foo>>pointsIndices[index+1].n;
+				pointsIndices[index+1].v--;
+				pointsIndices[index+1].t--;
+				pointsIndices[index+1].n--;
+				file>>pointsIndices[index].v>>foo>>pointsIndices[index].t>>foo>>pointsIndices[index].n;
+				pointsIndices[index].v--;
+				pointsIndices[index].t--;
+				pointsIndices[index].n--;
+				index+=3;
+			}
 		}
 	}
 	file.close();
@@ -159,7 +157,7 @@ int Model::loadData(const char* source) {
 
 	indices = (unsigned int*)malloc(sizeof(unsigned int)*facesCount*3);
 	vertices = (Point*)malloc(sizeof(Point)*indicesCount);
-	textures = (Point*)malloc(sizeof(Point)*indicesCount);
+	UVs = (Point*)malloc(sizeof(Point)*indicesCount);
 	normals = (Point*)malloc(sizeof(Point)*indicesCount);
 
 	i = 0;
@@ -180,8 +178,8 @@ int Model::loadData(const char* source) {
 			vertices[k].x = verticesPoints[pointsIndices[i].v].x;
 			vertices[k].y = verticesPoints[pointsIndices[i].v].y;
 			vertices[k].z = verticesPoints[pointsIndices[i].v].z;
-			textures[k].x = texturePoints[pointsIndices[i].t].x;
-			textures[k].y = texturePoints[pointsIndices[i].t].y;
+			UVs[k].x = texturePoints[pointsIndices[i].t].x;
+			UVs[k].y = texturePoints[pointsIndices[i].t].y;
 			normals[k].x = normalsPoints[pointsIndices[i].n].x;
 			normals[k].y = normalsPoints[pointsIndices[i].n].y;
 			normals[k].z = normalsPoints[pointsIndices[i].n].z;

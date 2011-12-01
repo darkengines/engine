@@ -17,6 +17,7 @@
 #include "Shader.h"
 #include "Model.h"
 #include "Texture.h"
+#include "Object.h"
 
 ////////////////////////////////////////////////////
 // Class name: System

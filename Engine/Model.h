@@ -27,10 +27,6 @@ typedef struct {
 	unsigned int v, t, n;
 } PointIndice;
 
-typedef struct {
-	unsigned int i;
-} Indice;
-
 ////////////////////////////////////////////////////
 // Class name: Model
 ////////////////////////////////////////////////////
@@ -40,9 +36,10 @@ using namespace std;
 class Model {
 private:
 public:
-	Point *vertices, *textures, *normals;
+	Point *vertices, *UVs, *normals;
 	unsigned int* indices;
-	int verticesCount, texturesCount, normalsCount, facesCount, indicesCount;
+	int verticesCount, indicesCount, normalsCount, facesCount, UVsCount;
+	int verticesOffset, normalsOffset, UVsOffset;
 	Model();
 	int Initialize(const char*);
 private:
