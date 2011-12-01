@@ -11,6 +11,7 @@
 
 #include <SDL\SDL.h>
 #include <iostream>
+#include <queue>
 
 ////////////////////////////////////////////////////
 // Class name: Inputs
@@ -20,13 +21,14 @@ using namespace std;
 
 class Inputs {
 private:
-	SDL_Event events;
 public:
 	Inputs();
 	int Perform();
 	void (*ptrLeave)();
-private:
 	int CaptureEvents();
+	queue<SDL_Event> events;
+
+private:
 };
 
 #endif

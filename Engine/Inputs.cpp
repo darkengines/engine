@@ -13,22 +13,13 @@ Inputs::Inputs() {
 }
 
 int Inputs::CaptureEvents() {
-	return SDL_PollEvent(&events);
+	SDL_Event event;
+	while (SDL_PollEvent(&event)) {
+		events.push(event);
+	}
+	return 0;
 }
 
 int Inputs::Perform() {
-	if (CaptureEvents()) {
-		switch (events.type) {
-			case (SDL_KEYDOWN): {
-				switch (events.key.keysym.sym) {
-					case (SDLK_ESCAPE): {
-						(*ptrLeave)();
-						break;
-					}
-				}
-				break;
-			}
-		}
-	}
 	return 0;
 }

@@ -27,12 +27,8 @@ using namespace std;
 
 class Object {
 private:
-	static list<Model*> loadedModels;
-	static list<Texture*> loadedTextures;
-	static list<Shader*> loadedShaders;
 public:
 	Object();
-	int Initialize(const char**, const char**, const char**, const char**, const char**, const char***, unsigned int*, unsigned int);
 	Model** models;
 	Texture** textures;
 	Shader** Shaders;

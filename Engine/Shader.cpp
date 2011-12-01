@@ -8,12 +8,13 @@
 // Body
 ////////////////////////////////////////////////////
 
+list<LoadedShader*> Shader::loaded = list<LoadedShader*>();
+
 Shader::Shader() {
 
 }
 
 int Shader::Initialize(const char* vertexShaderSource, const char* pixelShaderSource, char** attributes, int attributesCount) {
-
 	int result;
 	result = loadShader(&vertexShader, vertexShaderSource, GL_VERTEX_SHADER);
 	if (result < 0) {
@@ -30,6 +31,62 @@ int Shader::Initialize(const char* vertexShaderSource, const char* pixelShaderSo
 		cout<<"loadProgram error"<<endl;
 		return -1;
 	}
+	return 0;
+}
+
+LoadedShader* Shader::isShaderLoaded(const char* vertexShaderPath, const char* pixelShaderPath) {
+	LoadedShader* result = 0;
+	string vertexSrc = vertexShaderPath;
+	string pixelSrc = pixelShaderPath;
+	string src = vertexSrc.append(pixelSrc);
+	string loadedPath;
+	int cmp = 0;
+	bool over = 0;
+	list<LoadedShader*>::iterator current;
+	current = loaded.begin();
+	while (!over && result == 0 && current != loaded.end()) {
+		loadedPath = string((*current)->vertexShaderPath, (*current)->pixelShaderPath);
+		cmp = src.compare(loadedPath);
+		if (!cmp) {
+			result = (*current);
+		}
+		over = cmp < 0;
+		current++;
+	}
+	return result;
+}
+
+int Shader::registerShader(const char* vertexShaderPath, const char* pixelShaderPath, Shader* Shader) {
+	string vertexSrc = vertexShaderPath;
+	string pixelSrc = pixelShaderPath;
+	string src = vertexSrc.append(pixelSrc);
+	string loadedPath;
+	LoadedShader* store = (LoadedShader*)malloc(sizeof(LoadedShader));
+	store->shader = Shader;
+	store->vertexShaderPath = (char*)malloc(strlen(vertexShaderPath)+1);
+	store->pixelShaderPath = (char*)malloc(strlen(pixelShaderPath)+1);
+	memcpy(store->vertexShaderPath, vertexShaderPath, strlen(vertexShaderPath));
+	memcpy(store->pixelShaderPath, pixelShaderPath, strlen(pixelShaderPath));
+	store->vertexShaderPath[strlen(vertexShaderPath)] = '\0';
+	store->pixelShaderPath[strlen(pixelShaderPath)] = '\0';
+	int cmp = 0;
+	bool over = 0;
+	list<LoadedShader*>::iterator current;
+	current = loaded.begin();
+	while (!over && current!= loaded.end()) {
+		loadedPath = string((*current)->vertexShaderPath, (*current)->pixelShaderPath);
+		cmp = src.compare(loadedPath);
+		if (cmp <= 0) {
+			loaded.insert(current, store);
+			over = 1;
+		}
+		current++;
+	}
+
+	if (!over) {
+		loaded.push_back(store);
+	}
+
 	return 0;
 }
 

@@ -30,6 +30,7 @@ private:
 	Graphics* graphics;
 	Inputs* inputs;
 	SDL_Window* window;
+	SDL_Event events;
 public:
 	System();
 	int Initialize();

@@ -69,7 +69,7 @@ void System::Shutdown() {
 }
 
 int System::Frame() {
-	inputs->Perform();
+	inputs->CaptureEvents();
 	if (graphics->Render()<0) {
 		return -1;
 	}
@@ -89,9 +89,10 @@ void System::Run() {
 	Matrix4* camera = new Matrix4();
 	camera->Identity();
 	camera->Camera(5,5,5,0,0,0,0,1,0);
+	camera->Save();
 	Matrix4* projection = new Matrix4();
 	projection->Identity();
-	projection->Perspective(1.22, 1024.0/768.0, 1.0, 100.0);
+	projection->Perspective(1.22, 1024.0/768.0, 0.001, 100.0);
 	Matrix4* modelView = new Matrix4();
 	Object* object = new Object();
 	char* attr[] = {{"in_Vertex"},{"in_Normal"}, {"in_Texture"}};
@@ -108,7 +109,7 @@ void System::Run() {
 	model->Initialize("Models/cube.obj", true);
 
 	Model* model2 = new Model();
-	model2->Initialize("Models/cube.obj", true);
+	model2->Initialize("Models/sphere.obj", true);
 
 	Texture* texture = new Texture();
 	texture->Initialize("Textures/penguins.tga", true);
@@ -122,6 +123,8 @@ void System::Run() {
 	ticks = lastTicks = 0;
 	modelView->Identity();
 	modelView->Save();
+	bool up, down;
+		up = down = 0;
 	while (!*done) {
 		
 		ticks = SDL_GetTicks();
@@ -130,17 +133,64 @@ void System::Run() {
 		}
 		lastTicks = SDL_GetTicks();
 		
+		/*camera->Load();
+		camera->Save();*/
+
 		
+
+		while (!inputs->events.empty()) {
+			events = inputs->events.front();
+			inputs->events.pop();
+			switch (events.type) {
+				case (SDL_KEYDOWN): {
+					switch (events.key.keysym.sym) {
+						case (SDLK_UP): {
+							up = true;
+							break;
+						}
+						case (SDLK_DOWN): {
+							down = true;
+							break;
+						}
+					}
+					break;
+				}
+				case (SDL_KEYUP): {
+					switch (events.key.keysym.sym) {
+						case (SDLK_UP): {
+							up = false;
+							break;
+						}
+						case (SDLK_DOWN): {
+							down = false;
+							break;
+						}
+					}
+					break;
+				}
+			}
+		}
+
+		if (up) {
+			cout<<"UP"<<endl;
+			camera->Translate(0.1,0.1,0.1);
+		}
+		if (down) {
+			cout<<"DOWN"<<endl;
+			camera->Translate(-0.1,-0.1,-0.1);
+		}
+
 		modelView->Load();
 		modelView->Save();
 		
 		//modelView->Translate(0.0,0.0,0.0);
 		
-		modelView->Rotate(0,1,0,j);
+		//modelView->Rotate(0,1,0,j);
 		//modelView->Rotate(1,0,0,3.14);
-		//modelView->Scale(0.0002, 0.0002, 0.0002);
+		modelView->Scale(0.5, 0.5, 0.5);
 		
 		Frame();
+		
 		glUniformMatrix4fv(glGetUniformLocation(shader->program, "modelView"), 1, GL_TRUE, modelView->values);
 		glUniformMatrix4fv(glGetUniformLocation(shader->program, "camera"), 1, GL_TRUE, camera->values);
 		glUniform3f(glGetUniformLocation(shader->program, "camVector"), -1,-1,-1);
@@ -170,7 +220,7 @@ void System::Run() {
 		modelView->Load();
 		modelView->Save();
 
-		modelView->Rotate(1,1,1,j);
+		//modelView->Rotate(1,1,1,j);
 		modelView->Translate(3, 0, 0);
 		//modelView->Scale(0.5, 0.5, 0.5);
 		
@@ -201,7 +251,7 @@ void System::Run() {
 		modelView->Load();
 		modelView->Save();
 		glUniformMatrix4fv(glGetUniformLocation(shader->program, "modelView"), 1, GL_TRUE, modelView->values);
-		j+=0.05;
+		j+=0.02;
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, vx);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, cx);
 		glEnableVertexAttribArray(0);

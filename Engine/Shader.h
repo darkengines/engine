@@ -13,18 +13,34 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
+#include <list>
+
+////////////////////////////////////////////////////
+// Namespace
+////////////////////////////////////////////////////
+
+using namespace std;
+class Shader;
+
+////////////////////////////////////////////////////
+// Typedefs
+////////////////////////////////////////////////////
+
+typedef struct {
+	char* pixelShaderPath;
+	char* vertexShaderPath;
+	Shader* shader;
+} LoadedShader;
 
 ////////////////////////////////////////////////////
 // Class name: Shader
 ////////////////////////////////////////////////////
 
-using namespace std;
-
 class Shader {
 private:
+	static list<LoadedShader*> loaded;
 	GLuint vertexShader;
 	GLuint pixelShader;
-	//GLuint program;
 
 public:
 	Shader();
@@ -36,6 +52,8 @@ private:
 	int loadShader(GLuint*, const char*, GLenum);
 	int loadProgram(GLuint*, GLuint, GLuint, char**, int);
 	int bindProgramAttributes(GLuint*, char**, int);
+	LoadedShader* isShaderLoaded(const char*, const char*);
+	int registerShader(const char*, const char*, Shader*);
 };
 
 #endif
