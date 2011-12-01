@@ -21,6 +21,5 @@ int Object::Initialize(const char** models,
 					   unsigned int* shadersAtrribsCounts,
 					   unsigned int elementsCount) {
 	
-
 	return 0;
 }

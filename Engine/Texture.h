@@ -15,22 +15,40 @@
 #include <iostream>
 #include <gl\glew.h>
 #include <SDL\SDL_image.h>
+#include <list>
+
+////////////////////////////////////////////////////
+// Namespaces
+////////////////////////////////////////////////////
+
+using namespace std;
+class Texture;
+
+////////////////////////////////////////////////////
+// Typesdefs
+////////////////////////////////////////////////////
+
+typedef struct {
+	char* path;
+	Texture* texture;
+} LoadedTexture;
 
 ////////////////////////////////////////////////////
 // Class name: Texture
 ////////////////////////////////////////////////////
 
-using namespace std;
-
 class Texture {
 private:
+	static list<LoadedTexture*> loaded;
 public:
 	Texture();
-	int Initialize(const char*);
+	int Initialize(const char*, bool);
 	GLuint textureID;
 
 private:
 	int loadImage(const char*);
+	LoadedTexture* isTextureLoaded(const char*);
+	int registerTexture(const char*, Texture*);
 };
 
 #endif

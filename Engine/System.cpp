@@ -88,7 +88,7 @@ void System::Run() {
 	Shader* shader = new Shader();
 	Matrix4* camera = new Matrix4();
 	camera->Identity();
-	camera->Camera(2,2,2,0,0,0,0,1,0);
+	camera->Camera(5,5,5,0,0,0,0,1,0);
 	Matrix4* projection = new Matrix4();
 	projection->Identity();
 	projection->Perspective(1.22, 1024.0/768.0, 1.0, 100.0);
@@ -105,42 +105,35 @@ void System::Run() {
 	float vz[] = {0,0,0,0,0,1};
 	float cz[] = {0.0, 0.0, 1.0, 0.0, 0.0, 1.0};
 	Model* model = new Model();
-	model->Initialize("Models/cube.obj");
+	model->Initialize("Models/cube.obj", true);
+
+	Model* model2 = new Model();
+	model2->Initialize("Models/cube.obj", true);
 
 	Texture* texture = new Texture();
-	texture->Initialize("Textures/penguins.tga");
+	texture->Initialize("Textures/penguins.tga", true);
+	Texture* texture2 = new Texture();
+	texture2->Initialize("Textures/penguins.tga", true);
 
 	float j = 0;
-	GLuint indices, vertices;
-	glGenBuffers(1, &vertices);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vertices);
-	glBufferData(GL_ARRAY_BUFFER, model->indicesCount*sizeof(float)*3*3, 0, GL_STATIC_DRAW);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, model->indicesCount*3*sizeof(float), model->vertices);
-	glBufferSubData(GL_ARRAY_BUFFER, model->indicesCount*3*sizeof(float), model->indicesCount*3*sizeof(float), model->normals);
-	glBufferSubData(GL_ARRAY_BUFFER, model->indicesCount*3*2*sizeof(float), model->indicesCount*3*sizeof(float), model->UVs);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	glGenBuffers(1, &indices);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, model->facesCount*3*sizeof(unsigned int), 0, GL_STATIC_DRAW);
-	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0,model->facesCount*3*sizeof(unsigned int), model->indices);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	float cam[3] = {3, 3, 3};
 	Uint32 ticks, lastTicks;
 	ticks = lastTicks = 0;
+	modelView->Identity();
+	modelView->Save();
 	while (!*done) {
 		
 		ticks = SDL_GetTicks();
-		if (ticks - lastTicks < 17) {
-			SDL_Delay( 17 - (ticks - lastTicks));
+		if (ticks - lastTicks < 16) {
+			SDL_Delay( 16 - (ticks - lastTicks));
 		}
 		lastTicks = SDL_GetTicks();
 		
-		modelView->Identity();
 		
+		modelView->Load();
 		modelView->Save();
+		
 		//modelView->Translate(0.0,0.0,0.0);
 		
 		modelView->Rotate(0,1,0,j);
@@ -154,26 +147,61 @@ void System::Run() {
 		glBindTexture(GL_TEXTURE_2D, texture->textureID);
 		glUniform1i(glGetUniformLocation(shader->program, "texture2d"),0);
 
-		glBindBuffer(GL_ARRAY_BUFFER, vertices);
+		glBindBuffer(GL_ARRAY_BUFFER, model->GLData);
 
 		glVertexAttribPointer(0, 3, GL_FLOAT,GL_FALSE, 0, 0);
 		glEnableVertexAttribArray(0);
 
-		glVertexAttribPointer(1, 3, GL_FLOAT,GL_TRUE, 0,(char*)(model->indicesCount*3*sizeof(float)));
+		glVertexAttribPointer(1, 3, GL_FLOAT,GL_TRUE, 0,(char*)model->dataCount);
 		glEnableVertexAttribArray(1);
 
-		glVertexAttribPointer(2, 3, GL_FLOAT,GL_FALSE, 0,(char*)(model->indicesCount*3*2*sizeof(float)));
+		glVertexAttribPointer(2, 3, GL_FLOAT,GL_FALSE, 0,(char*)(model->dataCount*2));
 		glEnableVertexAttribArray(2);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices);
-		glDrawElements(GL_TRIANGLES, model->facesCount*3, GL_UNSIGNED_INT, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model->GLIndices);
+		glDrawElements(GL_TRIANGLES, model->indicesCount, GL_UNSIGNED_INT, 0);
+
+		glDisableVertexAttribArray(model->GLIndices);
+		glDisableVertexAttribArray(model->GLData);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+		modelView->Load();
+		modelView->Save();
+
+		modelView->Rotate(1,1,1,j);
+		modelView->Translate(3, 0, 0);
+		//modelView->Scale(0.5, 0.5, 0.5);
+		
+		glBindTexture(GL_TEXTURE_2D, texture2->textureID);
+		glUniform1i(glGetUniformLocation(shader->program, "texture2d"),0);
+
+		glUniformMatrix4fv(glGetUniformLocation(shader->program, "modelView"), 1, GL_TRUE, modelView->values);
+		glBindBuffer(GL_ARRAY_BUFFER, model2->GLData);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT,GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(0);
+
+		glVertexAttribPointer(1, 3, GL_FLOAT,GL_TRUE, 0,(char*)(model2->dataCount));
+		glEnableVertexAttribArray(1);
+
+		glVertexAttribPointer(2, 3, GL_FLOAT,GL_FALSE, 0,(char*)(model2->dataCount*2));
+		glEnableVertexAttribArray(2);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model2->GLIndices);
+		glDrawElements(GL_TRIANGLES, model2->indicesCount, GL_UNSIGNED_INT, 0);
+
+		glDisableVertexAttribArray(model2->GLIndices);
+		glDisableVertexAttribArray(model2->GLData);
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		
 		modelView->Load();
+		modelView->Save();
 		glUniformMatrix4fv(glGetUniformLocation(shader->program, "modelView"), 1, GL_TRUE, modelView->values);
-		j+=0.01;
+		j+=0.05;
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, vx);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, cx);
 		glEnableVertexAttribArray(0);
@@ -202,8 +230,6 @@ void System::Run() {
 		SDL_GL_SwapWindow(window);
 
 	}
-	glDeleteBuffers(1, &vertices);
-	glDeleteBuffers(1, &indices);
 
 	delete modelView;
 	delete projection;

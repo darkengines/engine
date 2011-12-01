@@ -12,29 +12,89 @@
 // Body
 ////////////////////////////////////////////////////
 
+list<LoadedModel*> Model::loaded = list<LoadedModel*>();
+
 Model::Model() {}
-int Model::Initialize(const char* source) {
-	loadModel(source);
+int Model::Initialize(const char* source, bool loadOnce) {
+	if (loadOnce) {
+		LoadedModel* model = 0;
+		if ((model = isModelLoaded(source)) > 0) {
+			indicesCount = model->model->indicesCount;
+			dataCount = model->model->dataCount;
+			GLData = model->model->GLData;
+			GLIndices = model->model->GLIndices;
+		} else {
+			loadModel(source);
+			registerModel(source, this);
+		}
+	} else {
+		loadModel(source);
+	}
+	return 0;
+}
+
+LoadedModel* Model::isModelLoaded(const char* source) {
+	LoadedModel* result = 0;
+	string src = source;
+	int cmp = 0;
+	bool over = 0;
+	list<LoadedModel*>::iterator current;
+	current = loaded.begin();
+	while (!over && result == 0 && current != loaded.end()) {
+		cmp = src.compare((*current)->path);
+		if (!cmp) {
+			result = (*current);
+		}
+		over = cmp < 0;
+		current++;
+	}
+	return result;
+}
+
+int Model::registerModel(const char* source, Model* model) {
+	string src = source;
+	LoadedModel* store = (LoadedModel*)malloc(sizeof(LoadedModel));
+	store->model = model;
+	store->path = (char*)malloc(strlen(source)+1);
+	memcpy(store->path, source, strlen(source));
+	store->path[strlen(source)] = '\0';
+	int cmp = 0;
+	bool over = 0;
+	list<LoadedModel*>::iterator current;
+	current = loaded.begin();
+	while (!over && current!= loaded.end()) {
+		cmp = src.compare((*current)->path);
+		if (cmp <= 0) {
+			loaded.insert(current, store);
+			over = 1;
+		}
+		current++;
+	}
+
+	if (!over) {
+		loaded.push_back(store);
+	}
+
 	return 0;
 }
 
 int Model::loadModel(const char* source) {
-	loadCounts(source);
-	loadData(source);
-	return 0;
-}
+	Point *vertices, *normals, *UVs;
+	vertices = normals = UVs = 0;
+	unsigned int* indices = 0;
+	
+	unsigned verticesCount = 0;
+	unsigned normalsCount = 0;
+	unsigned UVsCount = 0;
+	unsigned facesCount = 0;
+	
 
-int Model::loadCounts(const char* source) {
 	ifstream file;
 	file.open(source);
 	if (!file.good()) {
 		cout<<source<<" open error"<<endl;
 		return -1;
 	}
-	verticesCount = 0;
-	UVsCount = 0;
-	normalsCount = 0;
-	facesCount = 0;
 	char input;
 
 	file.get(input);
@@ -63,11 +123,7 @@ int Model::loadCounts(const char* source) {
 		file.get(input);
 	}
 	file.close();
-	return 0;
-}
 
-int Model::loadData(const char* source) {
-	ifstream file;
 	file.open(source);
 	if (!file.good()) {
 		cout<<source<<" open error"<<endl;
@@ -87,7 +143,7 @@ int Model::loadData(const char* source) {
 	solved = 0;
 	index = 0;
 
-	char input, foo;
+	char foo;
 	Point *verticesPoints, *texturePoints, *normalsPoints;
  	verticesPoints = (Point*)malloc(sizeof(Point)*verticesCount);
 	texturePoints = (Point*)malloc(sizeof(Point)*UVsCount);
@@ -189,9 +245,32 @@ int Model::loadData(const char* source) {
 		}
 		i++;
 	}
+	dataCount = indicesCount*sizeof(Point);
+	indicesCount = facesCount*sizeof(PointIndice);
 	free(verticesPoints);
 	free(texturePoints);
 	free(normalsPoints);
 	free(pointsIndices);
+
+
+	glGenBuffers(1, &GLData);
+	glBindBuffer(GL_ARRAY_BUFFER, GLData);
+	glBufferData(GL_ARRAY_BUFFER, dataCount*3, 0, GL_STATIC_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, dataCount, vertices);
+	glBufferSubData(GL_ARRAY_BUFFER, dataCount, dataCount, normals);
+	glBufferSubData(GL_ARRAY_BUFFER, dataCount*2, dataCount, UVs);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glGenBuffers(1, &GLIndices);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GLIndices);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesCount, 0, GL_STATIC_DRAW);
+	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indicesCount, indices);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	free(vertices);
+	free(normals);
+	free(UVs);
+	free(indices);
+
 	return 0;
 }

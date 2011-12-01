@@ -12,8 +12,18 @@
 #include <iostream>
 #include <fstream>
 #include <queue>
+#include <list>
+#include <string>
 #include <stdlib.h>
 #include "Precision.h"
+#include <GL/glew.h>
+
+////////////////////////////////////////////////////
+// Namespaces
+////////////////////////////////////////////////////
+
+using namespace std;
+class Model;
 
 ////////////////////////////////////////////////////
 // Typedefs
@@ -27,25 +37,28 @@ typedef struct {
 	unsigned int v, t, n;
 } PointIndice;
 
+typedef struct {
+	char* path;
+	Model* model;
+} LoadedModel;
+
 ////////////////////////////////////////////////////
 // Class name: Model
 ////////////////////////////////////////////////////
 
-using namespace std;
-
 class Model {
 private:
+	static list<LoadedModel*> Model::loaded;
 public:
-	Point *vertices, *UVs, *normals;
-	unsigned int* indices;
-	int verticesCount, indicesCount, normalsCount, facesCount, UVsCount;
-	int verticesOffset, normalsOffset, UVsOffset;
+	unsigned int GLIndices;
+	unsigned int GLData;
+	unsigned int indicesCount, dataCount;
 	Model();
-	int Initialize(const char*);
+	int Initialize(const char*, bool);
 private:
 	int loadModel(const char*);
-	int loadCounts(const char*);
-	int loadData(const char*);
+	LoadedModel* isModelLoaded(const char*);
+	int registerModel(const char*, Model*);
 };
 
 #endif
