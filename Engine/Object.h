@@ -18,6 +18,8 @@
 // Class name: Object
 ////////////////////////////////////////////////////
 
+using namespace std;
+
 class Object {
 private:
 	static list<unsigned int> ;
