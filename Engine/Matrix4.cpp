@@ -163,7 +163,7 @@ void Matrix4::Perspective(real angle, real ratio, real near, real far) {
 
 void Matrix4::Camera(real eyeX, real eyeY, real eyeZ, real centerX, real centerY, real centerZ, real upX, real upY, real upZ) {
 	Vector3 axe = Vector3(upX, upY, upZ);
-	Vector3 look = Vector3(centerX-eyeX, centerY-eyeY, centerZ-eyeZ);
+	Vector3 look = Vector3(centerX, centerY, centerZ);
 	Vector3 normal = Vector3();
 	Vector3 newAxe = Vector3();
 	Matrix4*  camerator = new Matrix4();

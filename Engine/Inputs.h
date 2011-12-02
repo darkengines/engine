@@ -25,10 +25,11 @@ public:
 	Inputs();
 	int Perform();
 	void (*ptrLeave)();
-	int CaptureEvents();
+	int CaptureEvents(SDL_Window*);
 	queue<SDL_Event> events;
 
 private:
+	//SDL_EventFilter filter(void*, SDL_Event);
 };
 
 #endif

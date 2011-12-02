@@ -48,7 +48,13 @@ int Graphics::Render() {
 		cameraView->Camera(camera->position.x,
 						   camera->position.y,
 						   camera->position.z,
-						   0, 0, 0, 0, 1, 0);
+						   camera->lookAt.x,
+						   camera->lookAt.y,
+						   camera->lookAt.z,
+						   camera->vertical.x,
+						   camera->vertical.y,
+						   camera->vertical.z
+		);
 
 		modelView->Identity();
 
@@ -61,7 +67,7 @@ int Graphics::Render() {
 		glUniformMatrix4fv(glGetUniformLocation((*current)->shader->program, "projection"), 1, GL_TRUE, perspective->values);
 		glUniformMatrix4fv(glGetUniformLocation((*current)->shader->program, "modelView"), 1, GL_TRUE, modelView->values);
 		glUniformMatrix4fv(glGetUniformLocation((*current)->shader->program, "camera"), 1, GL_TRUE, cameraView->values);
-		glUniform3f(glGetUniformLocation((*current)->shader->program, "camVector"), -1,-1,-1);
+		glUniform3f(glGetUniformLocation((*current)->shader->program, "camVector"), camera->lookAt.x,camera->lookAt.y,camera->lookAt.z);
 
 		glBindTexture(GL_TEXTURE_2D, (*current)->texture->textureID);
 		glUniform1i(glGetUniformLocation((*current)->shader->program, "texture2d"),0);

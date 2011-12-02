@@ -9,5 +9,6 @@
 ////////////////////////////////////////////////////
 
 Camera::Camera() {
-
+	lookAt = Vector3();
+	vertical = Vector3();
 }

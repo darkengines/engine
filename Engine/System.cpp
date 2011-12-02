@@ -38,12 +38,9 @@ int System::InitializeWindow() {
 		cout<<"SDL_Init error "<<SDL_GetError()<<endl;
 		return -1;
 	}
-	//SDL_ShowCursor(0);
-	window = SDL_CreateWindow("Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+	window = SDL_CreateWindow("Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL );
 	SDL_ShowCursor(0);
-  SDL_WM_GrabInput(SDL_GRAB_ON);
-	cout<<SDL_SetRelativeMouseMode(SDL_TRUE)<<endl;
-	cout<<SDL_GetError()<<endl;
+	SDL_WM_GrabInput(SDL_GRAB_ON);
 	if (!window) {
 		cout<<"SDL_CreateWindow error "<<SDL_GetError()<<endl;
 		return -1;
@@ -73,7 +70,7 @@ void System::Shutdown() {
 }
 
 int System::Frame() {
-	inputs->CaptureEvents();
+	inputs->CaptureEvents(window);
 	if (graphics->Render()<0) {
 		return -1;
 	}
@@ -88,8 +85,8 @@ void Leave() {
 void System::Run() {
 	done = (int*) malloc(sizeof(int));
 	*done = 0;
-	bool up, down;
-	up = down = 0;
+	bool up, down, left, right;
+	up = down = left = right = 0;
 	int mx, my;
 	Uint32 ticks, lastTicks;
 	ticks = lastTicks = 0;
@@ -102,11 +99,19 @@ void System::Run() {
 		i+=3;
 	}
 
+	real theta = M_PI/4;
+	real phi = -3*M_PI/4;
 
 	Camera* camera = new Camera();
 	camera->position.x = 10;
 	camera->position.y = 10;
 	camera->position.z = 10;
+	camera->lookAt.x = cosr(theta)*sinr(phi);
+	camera->lookAt.y = cosr(phi);
+	camera->lookAt.z = sinr(theta)*sinr(phi);
+	camera->vertical.x = 0.0;
+	camera->vertical.y = 1.0;
+	camera->vertical.z = 0.0;
 
 	graphics->UseCamera(camera);
 
@@ -137,6 +142,14 @@ void System::Run() {
 							down = true;
 							break;
 						}
+						case (SDLK_LEFT): {
+							left = true;
+							break;
+						}
+						case (SDLK_RIGHT): {
+							right = true;
+							break;
+						}
 					}
 					break;
 				}
@@ -150,6 +163,14 @@ void System::Run() {
 							down = false;
 							break;
 						}
+						case (SDLK_LEFT): {
+							left = false;
+							break;
+						}
+						case (SDLK_RIGHT): {
+							right = false;
+							break;
+						}
 						case (SDLK_ESCAPE): {
 							*done = true;
 							break;
@@ -158,8 +179,13 @@ void System::Run() {
 					break;
 				}
 				case (SDL_MOUSEMOTION): {
-					cout<<events.motion.x<<", "<<events.motion.y<<endl;
-					cout<<events.motion.xrel<<", "<<events.motion.yrel<<endl;
+					
+					theta += events.motion.xrel*0.001;
+					phi -= events.motion.yrel*0.001;
+					camera->lookAt.x = cosr(theta)*sinr(phi);
+					camera->lookAt.y = cosr(phi);
+					camera->lookAt.z = sinr(theta)*sinr(phi);
+
 					break;
 				}
 					
@@ -168,6 +194,28 @@ void System::Run() {
 					break;
 				}
 			}
+		}
+		if (up) {
+			Vector3 pos;
+			Vector3 front = camera->lookAt;
+			front.normalize();
+			camera->position += front*0.1;
+		}
+		if (down) {
+			Vector3 pos;
+			Vector3 front = camera->lookAt;
+			front.normalize();
+			camera->position -= front*0.1;
+		}
+		if (left) {
+			Vector3 strafe = camera->lookAt % camera->vertical;
+			strafe.normalize();
+			camera->position -= strafe*0.1;
+		}
+		if (right) {
+			Vector3 strafe = camera->lookAt % camera->vertical;
+			strafe.normalize();
+			camera->position += strafe*0.1;
 		}
 	}
 

@@ -11,7 +11,7 @@
 Cube::Cube() {
 	Object();
 	model = new Model();
-	model->Initialize("Models/sphere.obj", true);
+	model->Initialize("Models/rifle.obj", true);
 	texture = new Texture();
 	texture->Initialize("Textures/penguins.jpg", true);
 	shader = new Shader();

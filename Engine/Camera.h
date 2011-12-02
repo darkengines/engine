@@ -23,6 +23,8 @@ class Camera: public Object {
 private:
 public:
 	Camera();
+	Vector3 lookAt;
+	Vector3 vertical;
 private:
 };
 

@@ -23,6 +23,12 @@ Vector3::Vector3(real x, real y, real z) {
 	this->y = y;
 	this->z = z;
 }
+Vector3& Vector3::operator=(Vector3& v) {
+	x = v.x;
+	y = v.y;
+	z = v.z;
+	return *this;
+}
 Vector3 Vector3::operator+(real v) {
 	return Vector3(x+v, y+v, z+v);
 }
@@ -39,6 +45,24 @@ void Vector3::operator+=(Vector3& v) {
 	y+=v.y;
 	z+=v.z;
 }
+
+Vector3 Vector3::operator-(real v) {
+	return Vector3(x-v, y-v, z-v);
+}
+void Vector3::operator-=(real v) {
+	x-=v;
+	y-=v;
+	z-=v;
+}
+Vector3 Vector3::operator-(Vector3& v) {
+	return Vector3(x-v.x, y-v.y, z-v.z);
+}
+void Vector3::operator-=(Vector3& v) {
+	x-=v.x;
+	y-=v.y;
+	z-=v.z;
+}
+
 Vector3 Vector3::operator*(real v) {
 	return Vector3(x*v, y*v, z*v);
 }
