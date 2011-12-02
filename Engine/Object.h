@@ -12,6 +12,7 @@
 #include "Model.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "Vector3.h"
 #include <string>
 #include <list>
 
@@ -25,13 +26,17 @@ using namespace std;
 // Class name: Object
 ////////////////////////////////////////////////////
 
-class Object {
+virtual class Object {
 private:
 public:
 	Object();
-	Model** models;
-	Texture** textures;
-	Shader** Shaders;
+	Vector3 position;
+	Vector3 rotationBase;
+	real rotationAngle;
+	Vector3 scale;
+	Model* model;
+	Texture* texture;
+	Shader* shader;
 private:
 };
 

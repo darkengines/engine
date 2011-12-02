@@ -17,6 +17,8 @@
 #include "Shader.h"
 #include "Model.h"
 #include "Texture.h"
+#include "Cube.h"
+#include "Camera.h"
 #include "Object.h"
 
 ////////////////////////////////////////////////////
