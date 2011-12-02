@@ -40,6 +40,7 @@ LoadedModel* Model::isModelLoaded(const char* source) {
 	bool over = 0;
 	list<LoadedModel*>::iterator current;
 	current = loaded.begin();
+
 	while (!over && result == 0 && current != loaded.end()) {
 		cmp = src.compare((*current)->path);
 		if (!cmp) {

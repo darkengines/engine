@@ -17,6 +17,7 @@ int Inputs::CaptureEvents() {
 	while (SDL_PollEvent(&event)) {
 		events.push(event);
 	}
+	
 	return 0;
 }
 

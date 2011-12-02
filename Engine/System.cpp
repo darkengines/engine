@@ -38,8 +38,9 @@ int System::InitializeWindow() {
 		cout<<"SDL_Init error "<<SDL_GetError()<<endl;
 		return -1;
 	}
-
-	window = SDL_CreateWindow("Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+	//SDL_ShowCursor(0);
+	window = SDL_CreateWindow("Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_INPUT_GRABBED);
+	
 	if (!window) {
 		cout<<"SDL_CreateWindow error "<<SDL_GetError()<<endl;
 		return -1;
@@ -70,6 +71,9 @@ void System::Shutdown() {
 
 int System::Frame() {
 	inputs->CaptureEvents();
+	SDL_EventState(SDL_MOUSEMOTION, SDL_DISABLE);
+	SDL_WarpMouseInWindow(window, 1024/2, 768/2); //center that bitch
+	SDL_EventState(SDL_MOUSEMOTION, SDL_ENABLE);
 	if (graphics->Render()<0) {
 		return -1;
 	}
@@ -165,8 +169,20 @@ void System::Run() {
 							down = false;
 							break;
 						}
+						case (SDLK_ESCAPE): {
+							*done = true;
+							break;
+						}
 					}
 					break;
+				}
+				case (SDL_MOUSEMOTION): {
+					cout<<events.motion.x<<", "<<events.motion.y<<endl;
+					cout<<events.motion.xrel<<", "<<events.motion.yrel<<endl;
+					break;
+				}
+				case (SDL_QUIT): {
+					*done = 1;
 				}
 			}
 		}
