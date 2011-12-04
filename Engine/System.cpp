@@ -90,14 +90,6 @@ void System::Run() {
 	int mx, my;
 	Uint32 ticks, lastTicks;
 	ticks = lastTicks = 0;
-	Cube* cube;
-	real i = -30;
-	while (i<30) {
-		cube = new Cube();
-		cube->position.x = i;
-		graphics->AddObject(cube);
-		i+=3;
-	}
 
 	real theta = M_PI/4;
 	real phi = -3*M_PI/4;
