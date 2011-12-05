@@ -98,5 +98,8 @@
     <ClInclude Include="Cube.h">
       <Filter>Objects\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
