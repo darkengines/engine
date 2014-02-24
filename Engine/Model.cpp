@@ -24,11 +24,11 @@ int Model::Initialize(const char* source, bool loadOnce) {
 			GLData = model->model->GLData;
 			GLIndices = model->model->GLIndices;
 		} else {
-			loadModel(source);
+			loadCustomModel(source);
 			registerModel(source, this);
 		}
 	} else {
-		loadModel(source);
+		loadCustomModel(source);
 	}
 	return 0;
 }
@@ -78,7 +78,56 @@ int Model::registerModel(const char* source, Model* model) {
 
 	return 0;
 }
+int Model::loadCustomModel(const char* source) {
 
+	ifstream file;
+	file.open(source, ifstream::binary);
+	if (!file.good()) {
+		cout<<source<<" open error"<<endl;
+		return -1;
+	}
+
+	file.read((char*)&dataCount, sizeof(unsigned int));
+	file.read((char*)&indicesCount, sizeof(unsigned int));
+
+	Point *vertices, *normals;
+	UV *UVs;
+	vertices = normals = 0;
+	UVs = 0;
+	unsigned int* indices = 0;
+
+	vertices = (Point*)malloc(sizeof(Point)*dataCount);
+	normals = (Point*)malloc(sizeof(Point)*dataCount);
+	UVs = (UV*)malloc(sizeof(UV)*dataCount);
+	indices = (unsigned int*)malloc(sizeof(unsigned int)*indicesCount);
+
+	file.read((char*)vertices, sizeof(Point)*dataCount);
+	file.read((char*)normals, sizeof(Point)*dataCount);
+	file.read((char*)UVs, sizeof(UV)*dataCount);
+
+	file.read((char*)indices, sizeof(unsigned int)*indicesCount);
+
+	file.close();
+
+	glGenBuffers(1, &GLData);
+	glBindBuffer(GL_ARRAY_BUFFER, GLData);
+	glBufferData(GL_ARRAY_BUFFER, dataCount*sizeof(Point)*2+dataCount*sizeof(UV), 0, GL_STATIC_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, dataCount*sizeof(Point), vertices);
+	glBufferSubData(GL_ARRAY_BUFFER, dataCount*sizeof(Point), dataCount*sizeof(Point), normals);
+	glBufferSubData(GL_ARRAY_BUFFER, dataCount*sizeof(Point)*2, dataCount*sizeof(UV), UVs);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glGenBuffers(1, &GLIndices);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GLIndices);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesCount*sizeof(unsigned int), 0, GL_STATIC_DRAW);
+	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indicesCount*sizeof(unsigned int), indices);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	free(vertices);
+	free(normals);
+	free(UVs);
+	free(indices);
+}
 int Model::loadModel(const char* source) {
 	Point *vertices, *normals, *UVs;
 	vertices = normals = UVs = 0;

@@ -3,12 +3,16 @@
 ////////////////////////////////////////////////////
 
 #include "Camera.h"
-
 ////////////////////////////////////////////////////
 // Body
 ////////////////////////////////////////////////////
 
 Camera::Camera() {
-	lookAt = Vector3();
-	vertical = Vector3();
+	position = glm::vec3();
+	lookAt = glm::vec3();
+	vertical = glm::vec3();
+}
+
+String Camera::ToString() {
+	return String("Camera");
 }

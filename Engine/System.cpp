@@ -26,19 +26,18 @@ int System::Initialize() {
 	if (InitializeWindow() < 0) return -1;
 
 	if (graphics->Initialize()<0) return -1;
-	graphics->SetPerspective(1.22, 1024.0/768.0, 0.001, 100.0);
+	graphics->SetPerspective(45.0f, 1440.0f/900.0f, 0.001, 100.0);
 	return 0;
 }
 
 int System::InitializeWindow() {
 	int result;
-
 	result = SDL_Init(SDL_INIT_VIDEO);
 	if (result < 0) {
 		cout<<"SDL_Init error "<<SDL_GetError()<<endl;
 		return -1;
 	}
-	window = SDL_CreateWindow("Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL );
+	window = SDL_CreateWindow("Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1440, 900, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
 	SDL_ShowCursor(0);
 	SDL_WM_GrabInput(SDL_GRAB_ON);
 	if (!window) {
@@ -98,9 +97,9 @@ void System::Run() {
 	camera->position.x = 10;
 	camera->position.y = 10;
 	camera->position.z = 10;
-	camera->lookAt.x = cosr(theta)*sinr(phi);
-	camera->lookAt.y = cosr(phi);
-	camera->lookAt.z = sinr(theta)*sinr(phi);
+	camera->lookAt.x = -1;
+	camera->lookAt.y = -1;
+	camera->lookAt.z = -1;
 	camera->vertical.x = 0.0;
 	camera->vertical.y = 1.0;
 	camera->vertical.z = 0.0;
@@ -109,7 +108,10 @@ void System::Run() {
 
 	real j = 0.0;
 
-	
+	SmartPointer<Spatial> cube = new Cube();
+	graphics->AddObject(cube);
+
+	Object::PrintInUse(stdout, "InUse");
 
 	while (!*done) {
 		ticks = SDL_GetTicks();
@@ -124,7 +126,13 @@ void System::Run() {
 			events = inputs->events.front();
 			inputs->events.pop();
 			switch (events.type) {
-				case (SDL_KEYDOWN): {
+			case (SDL_MOUSEBUTTONUP): {
+				Cube* cube = new Cube();
+				cube->position = camera->position;
+				graphics->AddObject(cube);
+				break;
+			}
+			case (SDL_KEYDOWN): {
 					switch (events.key.keysym.sym) {
 						case (SDLK_UP): {
 							up = true;
@@ -188,26 +196,26 @@ void System::Run() {
 			}
 		}
 		if (up) {
-			Vector3 pos;
-			Vector3 front = camera->lookAt;
-			front.normalize();
-			camera->position += front*0.1;
+			glm::vec3 pos;
+			glm::vec3 front = camera->lookAt;
+			front = glm::normalize(front);
+			camera->position += front*0.1f;
 		}
 		if (down) {
-			Vector3 pos;
-			Vector3 front = camera->lookAt;
-			front.normalize();
-			camera->position -= front*0.1;
+			glm::vec3 pos;
+			glm::vec3 front = camera->lookAt;
+			front = glm::normalize(front);
+			camera->position -= front*0.1f;
 		}
 		if (left) {
-			Vector3 strafe = camera->lookAt % camera->vertical;
-			strafe.normalize();
-			camera->position -= strafe*0.1;
+			glm::vec3 strafe = glm::cross(camera->lookAt,camera->vertical);
+			strafe = glm::normalize(strafe);
+			camera->position -= strafe*0.1f;
 		}
 		if (right) {
-			Vector3 strafe = camera->lookAt % camera->vertical;
-			strafe.normalize();
-			camera->position += strafe*0.1;
+			glm::vec3 strafe = glm::cross(camera->lookAt,camera->vertical);
+			strafe = glm::normalize(strafe);
+			camera->position += strafe*0.1f;
 		}
 	}
 

@@ -4,10 +4,9 @@
 
 #ifndef _CUBE_H_
 #define _CUBE_H_
+#include "Spatial.h"
 #include <GL\glew.h>
-#include "Object.h"
 #include <iostream>
-#include "Shader.h"
 
 ////////////////////////////////////////////////////
 // Includes
@@ -19,10 +18,11 @@
 
 using namespace std;
 
-class Cube: public Object {
+class Cube: public Spatial {
 private:
 public:
 	Cube();
+	String ToString();
 private:
 };
 

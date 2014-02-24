@@ -10,7 +10,7 @@
 ////////////////////////////////////////////////////
 
 #include "Precision.h"
-#include "Vector3.h"
+#include "glm::vec3.h"
 #include <vector>
 
 ////////////////////////////////////////////////////
@@ -29,12 +29,12 @@ private:
 public:
 	Light();
 	static vector<Light*> lights;
-	Vector3 position;
-	Vector3 direction;
-	Vector3 ambiant;
-	Vector3 diffuse;
-	Vector3 spectacular;
-	Vector3 attenuation;
+	glm::vec3 position;
+	glm::vec3 direction;
+	glm::vec3 ambiant;
+	glm::vec3 diffuse;
+	glm::vec3 spectacular;
+	glm::vec3 attenuation;
 private:
 };
 

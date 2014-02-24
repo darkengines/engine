@@ -34,6 +34,10 @@ typedef struct {
 } Point;
 
 typedef struct {
+	real x, y;
+} UV;
+
+typedef struct {
 	unsigned int v, t, n;
 } PointIndice;
 
@@ -57,6 +61,7 @@ public:
 	int Initialize(const char*, bool);
 private:
 	int loadModel(const char*);
+	int loadCustomModel(const char*);
 	LoadedModel* isModelLoaded(const char*);
 	int registerModel(const char*, Model*);
 };

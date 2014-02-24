@@ -4,27 +4,28 @@
 
 #ifndef _CAMERA_H_
 #define _CAMERA_H_
-#include <GL\glew.h>
-#include "Object.h"
-#include <iostream>
-#include "Shader.h"
 
 ////////////////////////////////////////////////////
 // Includes
 ////////////////////////////////////////////////////
 
+#include <GLM/vec3.hpp>
+#include <iostream>
+
+#include "Object.h"	
+
 ////////////////////////////////////////////////////
 // Class name: Camera
 ////////////////////////////////////////////////////
-
-using namespace std;
 
 class Camera: public Object {
 private:
 public:
 	Camera();
-	Vector3 lookAt;
-	Vector3 vertical;
+	glm::vec3 lookAt;
+	glm::vec3 vertical;
+	glm::vec3 position;
+	String ToString();
 private:
 };
 

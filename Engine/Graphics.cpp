@@ -13,10 +13,10 @@
 ////////////////////////////////////////////////////
 
 Graphics::Graphics() {
-	objects = list<Object*>();
-	perspective = new Matrix4();
-	modelView = new Matrix4();
-	cameraView = new Matrix4();
+	objects = list<SmartPointer<Spatial>>();
+	perspective = glm::mat4();
+	modelView = glm::mat4();
+	cameraView = glm::mat4();
 }
 
 int Graphics::Initialize() {
@@ -38,35 +38,21 @@ void Graphics::Shutdown() {
 int Graphics::Render() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	list<Object*>::iterator current;
+	list<SmartPointer<Spatial>>::iterator current;
 	current = objects.begin();
 	while (current != objects.end()) {
 
 		glUseProgram((*current)->shader->program);
 
-		cameraView->Identity();
-		cameraView->Camera(camera->position.x,
-						   camera->position.y,
-						   camera->position.z,
-						   camera->lookAt.x,
-						   camera->lookAt.y,
-						   camera->lookAt.z,
-						   camera->vertical.x,
-						   camera->vertical.y,
-						   camera->vertical.z
-		);
-
-		modelView->Identity();
-
-		modelView->Translate((*current)->position.x, (*current)->position.y, (*current)->position.z);
-
-		if (!((*current)->rotationBase.x == (*current)->rotationBase.y == (*current)->rotationBase.z == 0)) {
-			modelView->Rotate((*current)->rotationBase.x, (*current)->rotationBase.y, (*current)->rotationBase.z, (*current)->rotationAngle);
-		}
+		cameraView = glm::lookAt(camera->position, camera->position+camera->lookAt, camera->vertical);
+		float* values = glm::value_ptr(cameraView);
+		modelView = glm::mat4();
+		modelView = glm::translate(modelView, (*current)->position);
+		modelView = glm::rotate(modelView, glm::angle((*current)->rotation), glm::axis((*current)->rotation));
 		
-		glUniformMatrix4fv(glGetUniformLocation((*current)->shader->program, "projection"), 1, GL_TRUE, perspective->values);
-		glUniformMatrix4fv(glGetUniformLocation((*current)->shader->program, "modelView"), 1, GL_TRUE, modelView->values);
-		glUniformMatrix4fv(glGetUniformLocation((*current)->shader->program, "camera"), 1, GL_TRUE, cameraView->values);
+		glUniformMatrix4fv(glGetUniformLocation((*current)->shader->program, "projection"), 1, GL_FALSE, glm::value_ptr(perspective));
+		glUniformMatrix4fv(glGetUniformLocation((*current)->shader->program, "modelView"), 1, GL_FALSE, glm::value_ptr(modelView));
+		glUniformMatrix4fv(glGetUniformLocation((*current)->shader->program, "camera"), 1, GL_FALSE, glm::value_ptr(cameraView));
 		glUniform3f(glGetUniformLocation((*current)->shader->program, "camVector"), camera->lookAt.x,camera->lookAt.y,camera->lookAt.z);
 
 		glBindTexture(GL_TEXTURE_2D, (*current)->texture->textureID);
@@ -74,8 +60,8 @@ int Graphics::Render() {
 		
 		glBindBuffer(GL_ARRAY_BUFFER, (*current)->model->GLData);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, 0, (char*)((*current)->model->dataCount));
-		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (char*)((*current)->model->dataCount*2));
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, 0, (char*)((*current)->model->dataCount*12));
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (char*)((*current)->model->dataCount*2*12));
 
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
@@ -83,7 +69,7 @@ int Graphics::Render() {
 		
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*current)->model->GLIndices);
 
-		glDrawElements(GL_TRIANGLES, (*current)->model->indicesCount*3, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_LINES, (*current)->model->indicesCount*3, GL_UNSIGNED_INT, 0);
 
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
@@ -99,7 +85,7 @@ int Graphics::Render() {
 	return 0;
 }
 
-int Graphics::AddObject(Object* object) {
+int Graphics::AddObject(SmartPointer<Spatial> object) {
 	objects.push_back(object);
 	return 0;
 }
@@ -110,7 +96,7 @@ int Graphics::UseCamera(Camera* c) {
 }
 
 int Graphics::SetPerspective(real angle, real ratio, real near, real far) {
-	perspective->Identity();
-	perspective->Perspective(angle, ratio, near, far);
+	perspective = glm::perspective(angle, ratio, near, far);
+	float* values = glm::value_ptr(perspective);
 	return 0;
 }
