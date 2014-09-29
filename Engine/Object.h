@@ -8,6 +8,7 @@
 #include "String.h"
 #include "Rtti.h"
 #include "SmartPointer.h"
+#include <stack>
 
 class Controller;
 
@@ -17,6 +18,7 @@ private:
 	static unsigned int _objectCount;
 	int _references;
 	std::list<SmartPointer<Controller>> _controllerList;
+	std::list<SmartPointer<Object>> _childs;
 protected:
 	unsigned int _id;
 public:
@@ -49,6 +51,8 @@ public:
 	void RemoveController(const SmartPointer<Controller>& controller);
 	void RemoveAllControllers();
 	virtual String ToString() = 0;
+	char* Serialize();
+	void AddChild(SmartPointer<Object>);
 private:
 	static unsigned int getNextId();
 };

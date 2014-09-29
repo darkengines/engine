@@ -27,6 +27,7 @@ public:
 	int GetMemoryUsed() const;
 	int GetDiskUsed() const;
 private:
+
 };
 
 #endif

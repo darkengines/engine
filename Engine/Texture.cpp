@@ -72,8 +72,6 @@ int Texture::registerTexture(const char* source, Texture* texture) {
 }
 
 int Texture::loadImage(const char* source) {
-
-
 	SDL_Surface* surface;
 	surface = IMG_Load(source);
 	glGenTextures(1, &textureID);

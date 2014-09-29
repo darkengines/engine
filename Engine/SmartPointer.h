@@ -70,7 +70,10 @@ public:
     }
 
 	bool operator ==(const SmartPointer<T>& sp) {
-		return pData == pData;
+		return pData == sp.pData;
+	}
+	bool operator !=(const T* sp) {
+		return pData != sp;
 	}
 };
 

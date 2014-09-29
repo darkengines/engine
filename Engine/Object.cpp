@@ -72,7 +72,12 @@ void Object::RemoveAllControllers() {
 unsigned int Object::getNextId() {
 	return _objectCount++;
 }
+void Object::AddChild(SmartPointer<Object> child) {
+	if (child != this) {
+		this->_childs.push_back(child);
+	}
+}
 
 unsigned int Object::_objectCount = 0;
-const Rtti Object::Type("Object",0);
+const Rtti Object::Type("Object",0, sizeof(Object));
 std::hash_map<unsigned int, Object*> Object::InUse;

@@ -69,7 +69,7 @@ int Graphics::Render() {
 		
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*current)->model->GLIndices);
 
-		glDrawElements(GL_LINES, (*current)->model->indicesCount*3, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, (*current)->model->indicesCount*3, GL_UNSIGNED_INT, 0);
 
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);

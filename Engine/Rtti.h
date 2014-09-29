@@ -6,9 +6,10 @@
 class Rtti {
 	private:
 	public:
-	Rtti(const char* name, const Rtti* baseType) {
+	Rtti(const char* name, const Rtti* baseType, const int size) {
 		_name = String(name);
 		_baseType = baseType;
+		_size = size;
 	}
 	~Rtti() {}
 	const String& GetName() const {
@@ -25,7 +26,11 @@ class Rtti {
 		}
 		return false;
 	}
+	int GetSize() {
+		return _size;
+	}
 	private:
+	int _size;
 	String _name;
 	const Rtti* _baseType;
 };
