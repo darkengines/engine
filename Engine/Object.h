@@ -2,7 +2,7 @@
 #define _OBJECT_H_
 
 #include <array>
-#include <hash_map>
+#include <unordered_map>
 #include <vector>
 #include <list>
 #include "String.h"
@@ -22,7 +22,7 @@ private:
 protected:
 	unsigned int _id;
 public:
-	static std::hash_map<unsigned int, Object*> InUse;
+	static std::unordered_map<unsigned int, Object*> InUse;
 	Object();
 	Object(Object& from);
 	~Object();

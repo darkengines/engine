@@ -50,7 +50,7 @@ unsigned int Object::GetId() const {
 void Object::PrintInUse(FILE* file, const char* message) {
 	fprintf(file, "%s:\n", message);
 	unsigned int key = 0;
-	std::hash_map<unsigned int, Object*>::iterator i, end;
+	std::unordered_map<unsigned int, Object*>::iterator i, end;
 	i = InUse.begin();
 	end = InUse.end();
 	while (i != end) {
@@ -80,4 +80,4 @@ void Object::AddChild(SmartPointer<Object> child) {
 
 unsigned int Object::_objectCount = 0;
 const Rtti Object::Type("Object",0, sizeof(Object));
-std::hash_map<unsigned int, Object*> Object::InUse;
+std::unordered_map<unsigned int, Object*> Object::InUse;

@@ -23,7 +23,7 @@ int Graphics::Initialize() {
 	GLenum result = 0;
 	result = glewInit();
 	if (result != GLEW_OK) {
-		cout<<"glewInit error "<<glewGetErrorString(result)<<endl;
+		cout << "glewInit error " << glewGetErrorString(result) << endl;
 		return -1;
 	}
 	glEnable(GL_DEPTH_TEST);
@@ -44,32 +44,32 @@ int Graphics::Render() {
 
 		glUseProgram((*current)->shader->program);
 
-		cameraView = glm::lookAt(camera->position, camera->position+camera->lookAt, camera->vertical);
+		cameraView = glm::lookAt(camera->position, camera->position + camera->lookAt, camera->vertical);
 		float* values = glm::value_ptr(cameraView);
 		modelView = glm::mat4();
 		modelView = glm::translate(modelView, (*current)->position);
 		modelView = glm::rotate(modelView, glm::angle((*current)->rotation), glm::axis((*current)->rotation));
-		
+
 		glUniformMatrix4fv(glGetUniformLocation((*current)->shader->program, "projection"), 1, GL_FALSE, glm::value_ptr(perspective));
 		glUniformMatrix4fv(glGetUniformLocation((*current)->shader->program, "modelView"), 1, GL_FALSE, glm::value_ptr(modelView));
 		glUniformMatrix4fv(glGetUniformLocation((*current)->shader->program, "camera"), 1, GL_FALSE, glm::value_ptr(cameraView));
-		glUniform3f(glGetUniformLocation((*current)->shader->program, "camVector"), camera->lookAt.x,camera->lookAt.y,camera->lookAt.z);
+		glUniform3f(glGetUniformLocation((*current)->shader->program, "camVector"), camera->lookAt.x, camera->lookAt.y, camera->lookAt.z);
 
 		glBindTexture(GL_TEXTURE_2D, (*current)->texture->textureID);
-		glUniform1i(glGetUniformLocation((*current)->shader->program, "texture2d"),0);
-		
+		glUniform1i(glGetUniformLocation((*current)->shader->program, "texture2d"), 0);
+
 		glBindBuffer(GL_ARRAY_BUFFER, (*current)->model->GLData);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, 0, (char*)((*current)->model->dataCount*12));
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (char*)((*current)->model->dataCount*2*12));
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, 0, (char*)((*current)->model->dataCount * 12));
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (char*)((*current)->model->dataCount * 2 * 12));
 
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
-		
+
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*current)->model->GLIndices);
 
-		glDrawElements(GL_TRIANGLES, (*current)->model->indicesCount*3, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, (*current)->model->indicesCount * 3, GL_UNSIGNED_INT, 0);
 
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
